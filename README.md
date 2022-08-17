@@ -109,3 +109,22 @@ https://docs.microsoft.com/en-us/aspnet/core/fundamentals/tools/dotnet-aspnet-co
 
     dotnet add package Microsoft.AspNetCore.Mvc.NewtonsoftJson --version 3.0.0
 
+**Code Generation ConfigurationManager (Scaffold)**
+
+    dotnet add package System.Configuration.ConfigurationManager --version 6.0.5
+
+
+## Project Command Lines
+
+**Create new migration**
+
+    dotnet ef migrations add Migration_Name
+
+**Update database schema**
+
+    dotnet ef database update
+
+**Scaffold Dbcontext (Controller)**
+
+    dotnet aspnet-codegenerator controller -name NameController -async -api -m ModelName -dc ApplicationDbContext -outDir Controllers
+
