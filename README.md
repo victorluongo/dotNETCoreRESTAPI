@@ -99,7 +99,7 @@ https://docs.microsoft.com/en-us/aspnet/core/fundamentals/tools/dotnet-aspnet-co
 
 **EFCore SQL Server**
 
-dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 6.0.5
+    dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 6.0.5
 
 **SQLite**
 
