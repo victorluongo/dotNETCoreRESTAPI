@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Models;
+using dotNETCoreRESTAPI.Interfaces;
 
 namespace dotNETCoreRESTAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SupplierController : ControllerBase
+    public class SupplierController : MainController
     {
         private readonly ApplicationDbContext _context;
 
-        public SupplierController(ApplicationDbContext context)
+        public SupplierController(ApplicationDbContext context, INotificator notificator):base(notificator)
         {
             _context = context;
         }
@@ -49,8 +50,11 @@ namespace dotNETCoreRESTAPI.Controllers
         {
             if (id != supplier.Id)
             {
-                return BadRequest();
+                NotifyError("Id doesn't match to the selected record.");
+                return CustomResponse(supplier);
             }
+
+            if(!ModelState.IsValid) return CustomResponse(ModelState);
 
             _context.Entry(supplier).State = EntityState.Modified;
 
@@ -70,7 +74,7 @@ namespace dotNETCoreRESTAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return CustomResponse(supplier);
         }
 
         // POST: api/Supplier
@@ -78,10 +82,21 @@ namespace dotNETCoreRESTAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Supplier>> PostSupplier(Supplier supplier)
         {
-            _context.Suppliers.Add(supplier);
-            await _context.SaveChangesAsync();
+            if(!ModelState.IsValid) return CustomResponse(ModelState);
 
-            return CreatedAtAction("GetSupplier", new { id = supplier.Id }, supplier);
+            _context.Suppliers.Add(supplier);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception exception)
+            {
+                NotifyError(exception.InnerException.Message);
+                return CustomResponse(supplier);
+            }
+
+            // return CreatedAtAction("GetSupplier", new { id = supplier.Id }, supplier);
+            return CustomResponse(supplier);
         }
 
         // DELETE: api/Supplier/5
@@ -97,7 +112,7 @@ namespace dotNETCoreRESTAPI.Controllers
             _context.Suppliers.Remove(supplier);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return CustomResponse(supplier);
         }
 
         private bool SupplierExists(Guid id)
