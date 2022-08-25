@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using dotNETCoreRESTAPI.Configuration;
 using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Interfaces;
 using dotNETCoreRESTAPI.Notifications;
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddIdentityConfiguration(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -31,6 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
