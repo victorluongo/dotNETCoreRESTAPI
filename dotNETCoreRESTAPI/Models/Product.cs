@@ -25,7 +25,7 @@ namespace dotNETCoreRESTAPI.Models
         
         [NotMapped]
         [DisplayName("Product Image")]
-        public IFormFile ImageUpload {get; set;}
+        public String ImageUpload {get; set;}
 
         [Required(ErrorMessage = "{0} is required.")]
         public decimal Price {get; set;}

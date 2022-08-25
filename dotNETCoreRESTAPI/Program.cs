@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Interfaces;
 using dotNETCoreRESTAPI.Notifications;
@@ -11,6 +12,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 builder.Services.AddScoped<INotificator, Notificator>();
 
