@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using dotNETCoreRESTAPI.Extensions;
@@ -49,7 +50,7 @@ namespace dotNETCoreRESTAPI.Controllers
             if(result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return CustomResponse(newUser);
+                return CustomResponse(JWT(user.Email));
             }
             foreach(var error in result.Errors)
             {
@@ -76,11 +77,30 @@ namespace dotNETCoreRESTAPI.Controllers
                 NotifyError("User name or password is incorrect");
             }
 
-            return CustomResponse(JWT());
+            return CustomResponse(JWT(login.Email));
         }
 
-        private string JWT()
+        private async Task<LoginResponse> JWT(string email)
         {
+
+            var user = await _userManager.FindByEmailAsync(email);
+            var claims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
+
+            foreach(var role in roles)
+            {
+                claims.Add(new Claim("role", role));
+            }
+
+            var identityClaims = new ClaimsIdentity();
+            identityClaims.AddClaims(claims);
+
             var tokenHandler = new JwtSecurityTokenHandler();
             
             var key =  Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -90,13 +110,35 @@ namespace dotNETCoreRESTAPI.Controllers
                     Issuer = _appSettings.Issuer,
                     Audience = _appSettings.Audience,
                     Expires = DateTime.UtcNow.AddHours(_appSettings.Expires),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                    Subject = identityClaims
                 }
             );
 
             var encodedToken = tokenHandler.WriteToken(token);
 
-            return encodedToken;
+            var response = new LoginResponse
+            {
+                AccessToken = encodedToken,
+                ExpiresIn = TimeSpan.FromHours(_appSettings.Expires).TotalSeconds,
+                UserToken = new UserToken
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Claims = claims.Select(
+                        options => new UserClaim
+                        {
+                            Type = options.Type,
+                            Value = options.Value
+                        }
+                    )
+                }
+            };
+
+            return response;
         }
+
+        private static long ToUnixEpochDate(DateTime date)
+            =>(long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970,1,1,0,0,0,TimeSpan.Zero)).TotalSeconds);
     }
 }

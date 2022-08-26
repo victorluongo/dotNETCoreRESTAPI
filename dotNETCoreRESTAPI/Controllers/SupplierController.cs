@@ -9,6 +9,7 @@ using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Models;
 using dotNETCoreRESTAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using dotNETCoreRESTAPI.Extensions;
 
 namespace dotNETCoreRESTAPI.Controllers
 {
@@ -25,6 +26,7 @@ namespace dotNETCoreRESTAPI.Controllers
         }
 
         // GET: api/Supplier
+        [ClaimsAuthorize("Supplier", "rd")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers()
         {
@@ -32,6 +34,7 @@ namespace dotNETCoreRESTAPI.Controllers
         }
 
         // GET: api/Supplier/5
+        [ClaimsAuthorize("Supplier", "rd")]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Supplier>> GetSupplier(Guid id)
         {
@@ -47,6 +50,7 @@ namespace dotNETCoreRESTAPI.Controllers
 
         // PUT: api/Supplier/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [ClaimsAuthorize("Supplier", "wr")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> PutSupplier(Guid id, Supplier supplier)
         {
@@ -81,6 +85,7 @@ namespace dotNETCoreRESTAPI.Controllers
 
         // POST: api/Supplier
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [ClaimsAuthorize("Supplier", "wr")]
         [HttpPost]
         public async Task<ActionResult<Supplier>> PostSupplier(Supplier supplier)
         {
@@ -102,6 +107,7 @@ namespace dotNETCoreRESTAPI.Controllers
         }
 
         // DELETE: api/Supplier/5
+        [ClaimsAuthorize("Supplier", "dl")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteSupplier(Guid id)
         {

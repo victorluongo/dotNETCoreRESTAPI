@@ -9,6 +9,7 @@ using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Models;
 using dotNETCoreRESTAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using dotNETCoreRESTAPI.Extensions;
 
 namespace dotNETCoreRESTAPI.Controllers
 {
@@ -25,6 +26,7 @@ namespace dotNETCoreRESTAPI.Controllers
         }
 
         // GET: api/Product
+        [ClaimsAuthorize("Product", "rd")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -35,6 +37,7 @@ namespace dotNETCoreRESTAPI.Controllers
         }
 
         // GET: api/Product/5
+        [ClaimsAuthorize("Product", "rd")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(Guid id)
         {
@@ -52,6 +55,7 @@ namespace dotNETCoreRESTAPI.Controllers
 
         // PUT: api/Product/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [ClaimsAuthorize("Product", "wr")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(Guid id, Product product)
         {
@@ -102,6 +106,7 @@ namespace dotNETCoreRESTAPI.Controllers
 
         // POST: api/Product
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [ClaimsAuthorize("Product", "wr")]
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -133,6 +138,7 @@ namespace dotNETCoreRESTAPI.Controllers
         }
 
         // DELETE: api/Product/5
+        [ClaimsAuthorize("Product", "dl")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
