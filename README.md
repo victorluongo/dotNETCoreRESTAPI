@@ -113,6 +113,10 @@ https://docs.microsoft.com/en-us/aspnet/core/fundamentals/tools/dotnet-aspnet-co
 
     dotnet add package System.Configuration.ConfigurationManager --version 6.0.5
 
+**Microsoft AspNetCore Authentication JwtBearer**
+
+    dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 6.0.8
+
 
 ## Project Command Lines
 

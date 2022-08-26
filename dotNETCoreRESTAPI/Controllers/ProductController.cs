@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Models;
 using dotNETCoreRESTAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace dotNETCoreRESTAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : MainController
