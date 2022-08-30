@@ -14,10 +14,25 @@ namespace dotNETCoreRESTAPI.Controllers
     {
 
         private readonly INotificator _notificator;
+        public readonly IUser _user;
 
-        protected MainController(INotificator notificator)
+        protected Guid userId {get; set;}
+        protected string userName {get; set;}
+        protected string userEmail {get; set;}
+        protected bool userIsAuthenticated {get; set;}
+
+        protected MainController(INotificator notificator, IUser user)
         {
             _notificator = notificator;
+            _user = user;
+
+            if(_user.IsAuthenticated())
+            {
+                userId = _user.GetUserId();
+                userName = _user.Name;
+                userEmail = _user.GetUserEmail();
+                userIsAuthenticated = true;
+            }
         }
 
         protected ActionResult CustomResponse(object result = null)

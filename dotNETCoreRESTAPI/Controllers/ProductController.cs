@@ -20,7 +20,7 @@ namespace dotNETCoreRESTAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductController(ApplicationDbContext context, INotificator notificator):base(notificator)
+        public ProductController(ApplicationDbContext context, INotificator notificator, IUser user):base(notificator, user)
         {
             _context = context;
         }

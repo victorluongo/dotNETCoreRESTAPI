@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using dotNETCoreRESTAPI.Configuration;
+using dotNETCoreRESTAPI.Controllers;
 using dotNETCoreRESTAPI.Data;
 using dotNETCoreRESTAPI.Interfaces;
 using dotNETCoreRESTAPI.Notifications;
@@ -17,6 +18,8 @@ builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 builder.Services.AddScoped<INotificator, Notificator>();
+
+builder.Services.ResolveDependencies();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
